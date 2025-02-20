@@ -33,7 +33,7 @@ async def read_root():
     print("hello")
     return {"message": "hello"}
 
-@router.post("/device/{deviceId}/report/daily")
+@router.post("/devices/{deviceId}/report/daily")
 async def post_daily_report(
     request: Request,
     deviceId: int = Path(..., title="Device ID", description="기기 ID"),
@@ -51,7 +51,7 @@ async def post_daily_report(
         logger.error("Error processing DAILY POST for device_id %s: %s", deviceId, str(e))
         raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다.")
     
-@router.post("/device/{deviceId}/report/hourly")
+@router.post("/devices/{deviceId}/report/hourly")
 async def post_hourly_report(
     request: Request,
     deviceId: int = Path(..., title="Device ID", description="기기 ID"),
@@ -69,7 +69,7 @@ async def post_hourly_report(
         logger.error("Error processing HOURLY POST for device_id %s: %s", deviceId, str(e))
         raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다.")
     
-@router.get("/device/{deviceId}/report/weekly")
+@router.get("/devices/{deviceId}/report/weekly")
 async def get_weekly_report(
     deviceId: int = Path(..., title="Device ID", description="기기 ID"),
     db: Session = Depends(get_db)
