@@ -6,6 +6,7 @@ from app.database.connection import get_db
 from app.services.preprocess import process_daily_post, process_hourly_post
 from app.services.json_load import load_device_json
 from app.services.recommendation import generate_and_update_recommendation
+from app.services.reco_test import recommendation_test
 
 """
 Swagger UI
@@ -33,6 +34,18 @@ async def read_root():
     print("hello")
     return {"message": "hello"}
 
+@router.post("/devices/{deviceId}/test")
+async def reco_test(deviceId: int, db: Session = Depends(get_db)):
+    try:
+        updated_reco = recommendation_test(db, deviceId)
+        if not updated_reco:
+            logger.error("Device %s not found for dummy update", deviceId)
+            raise HTTPException(status_code=404, detail=f"Device {deviceId} not found")
+        return create_response(200, f"Device {deviceId} updated with dummy recommendations")
+    except Exception as e:
+        logger.error("Error processing reco_test for device_id %s: %s", deviceId, str(e))
+        raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다.")
+    
 @router.post("/devices/{deviceId}/report/daily")
 async def post_daily_report(
     request: Request,
